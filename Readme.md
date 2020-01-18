@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Андрей Бортник](https://up.htmlacademy.ru/javascript/19/user/1123853).
-* Наставник: `Неизвестно`.
+* Наставник: [Магомед Кандаев](https://up.htmlacademy.ru/javascript/19/user/161600).
 
 ---
 
