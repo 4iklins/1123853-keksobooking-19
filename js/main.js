@@ -2,8 +2,8 @@
 
 var NUMBER_OF_ADS = 8;
 
-var OFFER_TITLE = ['Квартира', 'Бунгало', 'Дворец', 'Дом'];
-var OFFER_ADDRESS = {
+var OFFER_TITLES = ['Квартира', 'Бунгало', 'Дворец', 'Дом'];
+var OFFER_COORDINATES = {
   X: {
     MIN: 0,
     MAX: 1200
@@ -13,11 +13,11 @@ var OFFER_ADDRESS = {
     MAX: 630
   }
 };
-var OFFER_PRICE = {
+var OFFER_PRICES = {
   MIN: 1000,
   MAX: 100000
 };
-var OFFER_TYPE = ['flat', 'bungalo', 'palace', 'house'];
+var OFFER_TYPES = ['flat', 'bungalo', 'palace', 'house'];
 var OFFER_ROOMS = {
   MIN: 1,
   MAX: 4
@@ -29,7 +29,7 @@ var OFFER_GUESTS = {
 var OFFER_CHECKINS = ['12:00', '13:00', '14:00'];
 var OFFER_CHECKOUTS = ['12:00', '13:00', '14:00'];
 var OFFER_FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
-var OFFER_DESCRIPTION = [
+var OFFER_DESCRIPTIONS = [
   'Уютная спальня',
   'Утреннее солнце в кухне создаст настроение на весь день',
   'Прекрасный вид из окон на парк радует в любое время года',
@@ -38,11 +38,7 @@ var OFFER_DESCRIPTION = [
 var OFFER_PHOTOS = [
   'http://o0.github.io/assets/images/tokyo/hotel1.jpg',
   'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
-  'http://o0.github.io/assets/images/tokyo/hotel3.jpg',
-  'http://o0.github.io/assets/images/tokyo/hotel4.jpg',
-  'http://o0.github.io/assets/images/tokyo/hotel5.jpg',
-  'http://o0.github.io/assets/images/tokyo/hotel6.jpg',
-  'http://o0.github.io/assets/images/tokyo/hotel7.jpg'
+  'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
 ];
 var PIN_WIDTH = 50;
 var PIN_HEIGHT = 70;
@@ -62,30 +58,26 @@ var getRandomItem = function (array) {
 };
 
 var getShuffleArray = function (array) {
+  var ShuffleArray = array;
   var j;
   var temp;
-  for (var i = array.length - 1; i > 0; i--) {
+  for (var i = ShuffleArray.length - 1; i > 0; i--) {
     j = Math.floor(Math.random() * (i + 1));
-    temp = array[j];
-    array[j] = array[i];
-    array[i] = temp;
+    temp = ShuffleArray[j];
+    ShuffleArray[j] = ShuffleArray[i];
+    ShuffleArray[i] = temp;
   }
-  return array;
+  return ShuffleArray;
 };
 
 var getArrayRandomLength = function (array) {
   return getShuffleArray(array).slice(0, getRandomNumber(1, array.length));
 };
 
-var getAd = function (number) {
+var getGeneratedAd = function (number) {
 
-  var coordinateX = getRandomNumber(OFFER_ADDRESS.X.MIN, OFFER_ADDRESS.X.MAX);
-  var coordinateY = getRandomNumber(OFFER_ADDRESS.Y.MIN, OFFER_ADDRESS.Y.MAX);
-  var titleAd = getRandomItem(OFFER_TITLE);
-
-  var getTitleIndex = function () {
-    return OFFER_TITLE.indexOf(titleAd);
-  };
+  var coordinateX = getRandomNumber(OFFER_COORDINATES.X.MIN, OFFER_COORDINATES.X.MAX);
+  var coordinateY = getRandomNumber(OFFER_COORDINATES.Y.MIN, OFFER_COORDINATES.Y.MAX);
 
   return {
     author: {
@@ -93,16 +85,16 @@ var getAd = function (number) {
     },
 
     offer: {
-      title: titleAd,
+      title: getRandomItem(OFFER_TITLES),
       address: coordinateX + ', ' + coordinateY,
-      price: getRandomNumber(OFFER_PRICE.MIN, OFFER_PRICE.MAX),
-      type: OFFER_TYPE[getTitleIndex()],
+      price: getRandomNumber(OFFER_PRICES.MIN, OFFER_PRICES.MAX),
+      type: getRandomItem(OFFER_TYPES),
       rooms: getRandomNumber(OFFER_ROOMS.MIN, OFFER_ROOMS.MAX),
       guests: getRandomNumber(OFFER_GUESTS.MIN, OFFER_GUESTS.MAX),
       checkin: getRandomItem(OFFER_CHECKINS),
       checkout: getRandomItem(OFFER_CHECKOUTS),
       features: getArrayRandomLength(OFFER_FEATURES),
-      description: getRandomItem(OFFER_DESCRIPTION),
+      description: getRandomItem(OFFER_DESCRIPTIONS),
       photos: getArrayRandomLength(OFFER_PHOTOS)
     },
 
@@ -116,7 +108,7 @@ var getAd = function (number) {
 var createAds = function (numberOfAd) {
   var adsArray = [];
   for (var i = 0; i < numberOfAd; i++) {
-    adsArray.push(getAd(i + 1));
+    adsArray.push(getGeneratedAd(i + 1));
   }
   return adsArray;
 };
