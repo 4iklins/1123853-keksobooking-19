@@ -58,16 +58,16 @@ var getRandomItem = function (array) {
 };
 
 var getShuffleArray = function (array) {
-  var ShuffleArray = array;
+  var shuffleArray = array;
   var j;
   var temp;
-  for (var i = ShuffleArray.length - 1; i > 0; i--) {
+  for (var i = shuffleArray.length - 1; i > 0; i--) {
     j = Math.floor(Math.random() * (i + 1));
-    temp = ShuffleArray[j];
-    ShuffleArray[j] = ShuffleArray[i];
-    ShuffleArray[i] = temp;
+    temp = shuffleArray[j];
+    shuffleArray[j] = shuffleArray[i];
+    shuffleArray[i] = temp;
   }
-  return ShuffleArray;
+  return shuffleArray;
 };
 
 var getArrayRandomLength = function (array) {
