@@ -43,7 +43,15 @@ var OFFER_PHOTOS = [
 var PIN_WIDTH = 50;
 var PIN_HEIGHT = 70;
 
+var HOUSING_TYPES = {
+  flat: 'Квартира',
+  house: 'Дом',
+  bungalo: 'Бунгало',
+  palace: 'Дворец'
+};
+
 var map = document.querySelector('.map');
+var mapFilters = map.querySelector('.map__filters-container');
 
 var activateMap = function () {
   map.classList.remove('map--faded');
@@ -123,6 +131,35 @@ var createPin = function (pin) {
   return newPin;
 };
 
+var createFeatureList = function (array) {
+  return array.map(function (item) {
+    return '<li class="popup__feature popup__feature--' + item + '"></li>';
+  }).join('\n');
+};
+
+var createGalleryElements = function (array) {
+  return array.map(function (item) {
+    return '<img src="' + item + '"' + ' class="popup__photo" width="45" height="40" alt="Фотография жилья">';
+  }).join('\n');
+};
+
+var fillCard = function (cardItem) {
+  var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
+  var cardElement = cardTemplate.cloneNode(true);
+  cardElement.querySelector('.popup__title').textContent = cardItem.offer.title;
+  cardElement.querySelector('.popup__text--address').textContent = cardItem.offer.address;
+  cardElement.querySelector('.popup__text--price').innerHTML = cardItem.offer.price + ' &#x20bd;/ночь';
+  cardElement.querySelector('.popup__type').textContent = HOUSING_TYPES[cardItem.offer.type];
+  cardElement.querySelector('.popup__text--capacity').textContent = cardItem.offer.rooms + ' комнат для ' + cardItem.offer.guests + ' гостей';
+  cardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + cardItem.offer.checkin + ', выезд до ' + cardItem.offer.checkout;
+  cardElement.querySelector('.popup__features').innerHTML = '';
+  cardElement.querySelector('.popup__features').insertAdjacentHTML('beforeend', createFeatureList(cardItem.offer.features));
+  cardElement.querySelector('.popup__description').textContent = cardItem.offer.description;
+  cardElement.querySelector('.popup__photos').innerHTML = '';
+  cardElement.querySelector('.popup__photos').insertAdjacentHTML('beforeend', createGalleryElements(cardItem.offer.photos));
+  return cardElement;
+};
+
 var renderPins = function (pins) {
   var fragment = document.createDocumentFragment();
   pins.forEach(function (pin) {
@@ -131,6 +168,13 @@ var renderPins = function (pins) {
   map.querySelector('.map__pins').appendChild(fragment);
 };
 
+var renderCard = function (element) {
+  var fragment = document.createDocumentFragment();
+  fragment.appendChild(fillCard(element));
+  mapFilters.appendChild(fragment);
+};
+
 var adsList = createAds(NUMBER_OF_ADS);
 activateMap();
 renderPins(adsList);
+renderCard(adsList[0]);
