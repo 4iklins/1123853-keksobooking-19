@@ -69,19 +69,19 @@ var MIN_TITLE_LENGTH = 30;
 
 var roomsCapacityMap = {
   '1': {
-    'index': [0, 1, 3],
+    'index': [2],
     'guests': '1'
   },
   '2': {
-    'index': [0, 3],
+    'index': [1, 2],
     'guests': '2'
   },
   '3': {
-    'index': [3],
+    'index': [0, 1, 2],
     'guests': '3'
   },
   '100': {
-    'index': [0, 1, 2],
+    'index': [3],
     'guests': '0'
   },
 };
@@ -269,7 +269,6 @@ var setActivePage = function () {
   roomsField.addEventListener('change', onRoomsFieldChange);
   mapPinMain.removeEventListener('mousedown', onMapPinMainLeftMouseButtonClick);
   mapPinMain.removeEventListener('keydown', onMapPinMainEnterKeyDown);
-
 };
 
 var onMapPinMainLeftMouseButtonClick = function (evt) {
@@ -356,10 +355,18 @@ var onCheckoutFieldChange = function (evt) {
   checkinField.value = evt.target.value;
 };
 
+var setInactiveGuestsFieldItem = function (elements) {
+  for (var i = 0; i < elements.length; i++) {
+    elements[i].setAttribute('disabled', '');
+  }
+  return elements[i];
+};
+
 var validateRoomsNumbers = function () {
   var rooms = roomsField.value;
+  setInactiveGuestsFieldItem(guestsField);
   roomsCapacityMap[rooms].index.forEach(function (item) {
-    guestsField[item].setAttribute('disabled', '');
+    guestsField[item].removeAttribute('disabled', '');
     guestsField.value = roomsCapacityMap[rooms].guests;
   });
 };
