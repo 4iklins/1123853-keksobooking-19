@@ -261,6 +261,7 @@ var setActivePage = function () {
   setActiveFields(adFormFieldsets);
   validateTitle();
   validatePrice();
+  setActiveGuestFieldItem();
   titleField.addEventListener('input', validateTitle);
   typeOfHousingField.addEventListener('change', onTypeOfHousingChange);
   pricePerNightField.addEventListener('input', validatePrice);
@@ -362,7 +363,7 @@ var setInactiveGuestsFieldItem = function (elements) {
   return elements[i];
 };
 
-var validateRoomsNumbers = function () {
+var setActiveGuestFieldItem = function () {
   var rooms = roomsField.value;
   setInactiveGuestsFieldItem(guestsField);
   roomsCapacityMap[rooms].index.forEach(function (item) {
@@ -372,7 +373,7 @@ var validateRoomsNumbers = function () {
 };
 
 var onRoomsFieldChange = function () {
-  validateRoomsNumbers();
+  setActiveGuestFieldItem();
 };
 
 mapPinMain.addEventListener('mousedown', onMapPinMainLeftMouseButtonClick);
