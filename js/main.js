@@ -61,29 +61,17 @@ var INACTIVE_MAIN_PIN_WIDTH = 65;
 var INACTIVE_MAIN_PIN_HEIGHT = 65;
 
 var ACTIVE_MAIN_PIN_WIDTH = 65;
-var ACTIVE_MAIN_PIN_HEIGHT = 76;
+var ACTIVE_MAIN_PIN_HEIGHT = 84;
 
 var ENTER_KEY = 'Enter';
 var LEFT_MOUSE_BUTTON_KEY = 0;
 var MIN_TITLE_LENGTH = 30;
 
 var roomsCapacityMap = {
-  '1': {
-    'index': [2],
-    'guests': '1'
-  },
-  '2': {
-    'index': [1, 2],
-    'guests': '2'
-  },
-  '3': {
-    'index': [0, 1, 2],
-    'guests': '3'
-  },
-  '100': {
-    'index': [3],
-    'guests': '0'
-  },
+  '1': [1],
+  '2': [1, 2],
+  '3': [1, 2, 3],
+  '100': [0]
 };
 
 var map = document.querySelector('.map');
@@ -254,7 +242,7 @@ var setActivePage = function () {
   removeClass(adForm, 'ad-form--disabled');
   renderPins(adsList);
   renderCard(adsList[0]);
-  getMapPinMainActiveCoordinates();
+  fillActiveAddressField();
   addressField.setAttribute('readonly', '');
   mapFiltersFeaturesList.removeAttribute('disabled', '');
   setActiveFields(mapFiltersSelectLists);
@@ -262,9 +250,9 @@ var setActivePage = function () {
   validateTitle();
   validatePrice();
   setActiveGuestFieldItem();
-  titleField.addEventListener('input', validateTitle);
+  titleField.addEventListener('input', onTtitleFieldInput);
   typeOfHousingField.addEventListener('change', onTypeOfHousingChange);
-  pricePerNightField.addEventListener('input', validatePrice);
+  pricePerNightField.addEventListener('input', onPricePerNightFieldInput);
   checkinField.addEventListener('change', onCheckinFieldChange);
   checkoutField.addEventListener('change', onCheckoutFieldChange);
   roomsField.addEventListener('change', onRoomsFieldChange);
@@ -297,27 +285,27 @@ var setActiveFields = function (elements) {
 };
 
 var setInactivePage = function () {
-  getMapPinMainInActiveCoordinates();
+  fillInactiveAddressField();
   mapFiltersFeaturesList.setAttribute('disabled', '');
   setInactiveFields(mapFiltersSelectLists);
   setInactiveFields(adFormFieldsets);
   addressField.setAttribute('disabled', '');
 };
 
-var getMapPinMainInActiveCoordinates = function () {
+var fillInactiveAddressField = function () {
   var coordinates = {
     left: Math.round(parseInt(mapPinMain.style.left, 10) + INACTIVE_MAIN_PIN_WIDTH / 2),
     top: Math.round(parseInt(mapPinMain.style.top, 10) + INACTIVE_MAIN_PIN_HEIGHT / 2)
   };
-  return addressField.setAttribute('value', coordinates.left + ', ' + coordinates.top);
+  addressField.setAttribute('value', coordinates.left + ', ' + coordinates.top);
 };
 
-var getMapPinMainActiveCoordinates = function () {
+var fillActiveAddressField = function () {
   var coordinates = {
     left: Math.round(parseInt(mapPinMain.style.left, 10) + ACTIVE_MAIN_PIN_WIDTH / 2),
     top: Math.round(parseInt(mapPinMain.style.top, 10) + ACTIVE_MAIN_PIN_HEIGHT)
   };
-  return addressField.setAttribute('value', coordinates.left + ', ' + coordinates.top);
+  addressField.setAttribute('value', coordinates.left + ', ' + coordinates.top);
 };
 
 var validateTitle = function () {
@@ -330,6 +318,10 @@ var validateTitle = function () {
   }
 };
 
+var onTtitleFieldInput = function () {
+  validateTitle();
+};
+
 var validatePrice = function () {
   if (pricePerNightField.validity.valueMissing) {
     pricePerNightField.setCustomValidity('Обязательное текстовое поле');
@@ -340,6 +332,10 @@ var validatePrice = function () {
   } else {
     pricePerNightField.setCustomValidity('');
   }
+};
+
+var onPricePerNightFieldInput = function () {
+  validatePrice();
 };
 
 var onTypeOfHousingChange = function (evt) {
@@ -356,20 +352,16 @@ var onCheckoutFieldChange = function (evt) {
   checkinField.value = evt.target.value;
 };
 
-var setInactiveGuestsFieldItem = function (elements) {
-  for (var i = 0; i < elements.length; i++) {
-    elements[i].setAttribute('disabled', '');
-  }
-  return elements[i];
-};
-
 var setActiveGuestFieldItem = function () {
   var rooms = roomsField.value;
-  setInactiveGuestsFieldItem(guestsField);
-  roomsCapacityMap[rooms].index.forEach(function (item) {
-    guestsField[item].removeAttribute('disabled', '');
-    guestsField.value = roomsCapacityMap[rooms].guests;
+  var guests = guestsField;
+  var selectedGuestsOptions = guests.children;
+  Array.prototype.forEach.call(selectedGuestsOptions, function (item) {
+    item.disabled = !roomsCapacityMap[rooms].includes(+item.value) ? true : false;
   });
+  guests.value = roomsCapacityMap[rooms].includes(+guests.value)
+    ? guests.value
+    : roomsCapacityMap[rooms][0];
 };
 
 var onRoomsFieldChange = function () {
