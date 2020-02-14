@@ -250,7 +250,7 @@ var setActivePage = function () {
   validateTitle();
   validatePrice();
   setActiveGuestFieldItem();
-  titleField.addEventListener('input', onTtitleFieldInput);
+  titleField.addEventListener('input', onTitleFieldInput);
   typeOfHousingField.addEventListener('change', onTypeOfHousingChange);
   pricePerNightField.addEventListener('input', onPricePerNightFieldInput);
   checkinField.addEventListener('change', onCheckinFieldChange);
@@ -318,7 +318,7 @@ var validateTitle = function () {
   }
 };
 
-var onTtitleFieldInput = function () {
+var onTitleFieldInput = function () {
   validateTitle();
 };
 
