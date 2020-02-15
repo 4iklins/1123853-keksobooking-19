@@ -50,12 +50,46 @@ var HOUSING_TYPES = {
   palace: 'Дворец'
 };
 
+var HOUSING_PRICES = {
+  bungalo: 0,
+  flat: 1000,
+  house: 5000,
+  palace: 10000
+};
+
+var INACTIVE_MAIN_PIN_WIDTH = 65;
+var INACTIVE_MAIN_PIN_HEIGHT = 65;
+
+var ACTIVE_MAIN_PIN_WIDTH = 65;
+var ACTIVE_MAIN_PIN_HEIGHT = 84;
+
+var ENTER_KEY = 'Enter';
+var LEFT_MOUSE_BUTTON_KEY = 0;
+var MIN_TITLE_LENGTH = 30;
+
+var roomsCapacityMap = {
+  '1': [1],
+  '2': [1, 2],
+  '3': [1, 2, 3],
+  '100': [0]
+};
+
 var map = document.querySelector('.map');
 var mapFilters = map.querySelector('.map__filters-container');
-
-var activateMap = function () {
-  map.classList.remove('map--faded');
-};
+var mapPin = map.querySelector('.map__pins');
+var mapPinMain = map.querySelector('.map__pin--main');
+var mapFiltersSelectLists = mapFilters.querySelectorAll('select');
+var mapFiltersFeaturesList = mapFilters.querySelector('.map__features');
+var adForm = document.querySelector('.ad-form');
+var adFormFieldsets = adForm.querySelectorAll('fieldset');
+var addressField = adForm.querySelector('#address');
+var titleField = adForm.querySelector('#title');
+var typeOfHousingField = adForm.querySelector('#type');
+var pricePerNightField = adForm.querySelector('#price');
+var checkinField = adForm.querySelector('#timein');
+var checkoutField = adForm.querySelector('#timeout');
+var roomsField = adForm.querySelector('#room_number');
+var guestsField = adForm.querySelector('#capacity');
 
 var getRandomNumber = function (min, max) {
   return Math.floor(Math.random() * (max - min) + min);
@@ -194,10 +228,147 @@ var renderPins = function (pins) {
   pins.forEach(function (pin) {
     fragment.appendChild(createPin(pin));
   });
-  map.querySelector('.map__pins').appendChild(fragment);
+  mapPin.appendChild(fragment);
 };
 
 var adsList = createAds(NUMBER_OF_ADS);
-activateMap();
-renderPins(adsList);
-renderCard(adsList[0]);
+
+var removeClass = function (element, className) {
+  return element.classList.remove(className);
+};
+
+var setActivePage = function () {
+  removeClass(map, 'map--faded');
+  removeClass(adForm, 'ad-form--disabled');
+  renderPins(adsList);
+  renderCard(adsList[0]);
+  fillActiveAddressField();
+  addressField.setAttribute('readonly', '');
+  mapFiltersFeaturesList.removeAttribute('disabled', '');
+  setActiveFields(mapFiltersSelectLists);
+  setActiveFields(adFormFieldsets);
+  validateTitle();
+  validatePrice();
+  setActiveGuestFieldItem();
+  titleField.addEventListener('input', onTitleFieldInput);
+  typeOfHousingField.addEventListener('change', onTypeOfHousingChange);
+  pricePerNightField.addEventListener('input', onPricePerNightFieldInput);
+  checkinField.addEventListener('change', onCheckinFieldChange);
+  checkoutField.addEventListener('change', onCheckoutFieldChange);
+  roomsField.addEventListener('change', onRoomsFieldChange);
+  mapPinMain.removeEventListener('mousedown', onMapPinMainLeftMouseButtonClick);
+  mapPinMain.removeEventListener('keydown', onMapPinMainEnterKeyDown);
+};
+
+var onMapPinMainLeftMouseButtonClick = function (evt) {
+  if (evt.button === LEFT_MOUSE_BUTTON_KEY) {
+    setActivePage();
+  }
+};
+
+var onMapPinMainEnterKeyDown = function (evt) {
+  if (evt.key === ENTER_KEY) {
+    setActivePage();
+  }
+};
+
+var setInactiveFields = function (elements) {
+  return elements.forEach(function (element) {
+    element.setAttribute('disabled', '');
+  });
+};
+
+var setActiveFields = function (elements) {
+  return elements.forEach(function (element) {
+    element.removeAttribute('disabled', '');
+  });
+};
+
+var setInactivePage = function () {
+  fillInactiveAddressField();
+  mapFiltersFeaturesList.setAttribute('disabled', '');
+  setInactiveFields(mapFiltersSelectLists);
+  setInactiveFields(adFormFieldsets);
+  addressField.setAttribute('disabled', '');
+};
+
+var fillInactiveAddressField = function () {
+  var coordinates = {
+    left: Math.round(parseInt(mapPinMain.style.left, 10) + INACTIVE_MAIN_PIN_WIDTH / 2),
+    top: Math.round(parseInt(mapPinMain.style.top, 10) + INACTIVE_MAIN_PIN_HEIGHT / 2)
+  };
+  addressField.setAttribute('value', coordinates.left + ', ' + coordinates.top);
+};
+
+var fillActiveAddressField = function () {
+  var coordinates = {
+    left: Math.round(parseInt(mapPinMain.style.left, 10) + ACTIVE_MAIN_PIN_WIDTH / 2),
+    top: Math.round(parseInt(mapPinMain.style.top, 10) + ACTIVE_MAIN_PIN_HEIGHT)
+  };
+  addressField.setAttribute('value', coordinates.left + ', ' + coordinates.top);
+};
+
+var validateTitle = function () {
+  if (titleField.validity.valueMissing) {
+    titleField.setCustomValidity('Обязательное текстовое поле');
+  } else if (titleField.value.length < MIN_TITLE_LENGTH) {
+    titleField.setCustomValidity('Минимальная длина — ' + MIN_TITLE_LENGTH + ' символов');
+  } else {
+    titleField.setCustomValidity('');
+  }
+};
+
+var onTitleFieldInput = function () {
+  validateTitle();
+};
+
+var validatePrice = function () {
+  if (pricePerNightField.validity.valueMissing) {
+    pricePerNightField.setCustomValidity('Обязательное текстовое поле');
+  } else if (pricePerNightField.validity.rangeUnderflow) {
+    pricePerNightField.setCustomValidity('Цена не может быть меньше ' + pricePerNightField.min + ' руб.');
+  } else if (pricePerNightField.validity.rangeOverflow) {
+    pricePerNightField.setCustomValidity('Цена не может быть больше ' + pricePerNightField.max + ' руб.');
+  } else {
+    pricePerNightField.setCustomValidity('');
+  }
+};
+
+var onPricePerNightFieldInput = function () {
+  validatePrice();
+};
+
+var onTypeOfHousingChange = function (evt) {
+  var target = evt.target.value;
+  pricePerNightField.setAttribute('min', HOUSING_PRICES[target]);
+  pricePerNightField.setAttribute('placeholder', HOUSING_PRICES[target]);
+};
+
+var onCheckinFieldChange = function (evt) {
+  checkoutField.value = evt.target.value;
+};
+
+var onCheckoutFieldChange = function (evt) {
+  checkinField.value = evt.target.value;
+};
+
+var setActiveGuestFieldItem = function () {
+  var rooms = roomsField.value;
+  var guests = guestsField;
+  var selectedGuestsOptions = guests.children;
+  Array.prototype.forEach.call(selectedGuestsOptions, function (item) {
+    item.disabled = !roomsCapacityMap[rooms].includes(+item.value) ? true : false;
+  });
+  guests.value = roomsCapacityMap[rooms].includes(+guests.value)
+    ? guests.value
+    : roomsCapacityMap[rooms][0];
+};
+
+var onRoomsFieldChange = function () {
+  setActiveGuestFieldItem();
+};
+
+mapPinMain.addEventListener('mousedown', onMapPinMainLeftMouseButtonClick);
+mapPinMain.addEventListener('keydown', onMapPinMainEnterKeyDown);
+setInactivePage();
+
