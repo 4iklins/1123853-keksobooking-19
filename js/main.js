@@ -64,6 +64,7 @@ var ACTIVE_MAIN_PIN_WIDTH = 65;
 var ACTIVE_MAIN_PIN_HEIGHT = 84;
 
 var ENTER_KEY = 'Enter';
+var ESC_KEY = 'Escape';
 var LEFT_MOUSE_BUTTON_KEY = 0;
 var MIN_TITLE_LENGTH = 30;
 
@@ -90,6 +91,9 @@ var checkinField = adForm.querySelector('#timein');
 var checkoutField = adForm.querySelector('#timeout');
 var roomsField = adForm.querySelector('#room_number');
 var guestsField = adForm.querySelector('#capacity');
+var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
+var cardElement = cardTemplate.cloneNode(true);
+var cardButtonClose = cardElement.querySelector('.popup__close');
 
 var getRandomNumber = function (min, max) {
   return Math.floor(Math.random() * (max - min) + min);
@@ -181,13 +185,14 @@ var createAds = function (numberOfAd) {
   return adsArray;
 };
 
-var createPin = function (pin) {
+var createPin = function (pin, index) {
   var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
   var newPin = pinTemplate.cloneNode(true);
   newPin.style.top = pin.location.y - PIN_HEIGHT + 'px';
   newPin.style.left = pin.location.x - PIN_WIDTH / 2 + 'px';
   newPin.querySelector('img').src = pin.author.avatar;
   newPin.querySelector('img').alt = pin.offer.title;
+  newPin.setAttribute('id', String(index));
   return newPin;
 };
 
@@ -204,10 +209,9 @@ var createGalleryElements = function (photos) {
 };
 
 var renderCard = function (cardItem) {
-  var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
-  var cardElement = cardTemplate.cloneNode(true);
   var rooms = cardItem.offer.rooms;
   var guests = cardItem.offer.guests;
+  cardElement.querySelector('.popup__avatar').src = cardItem.author.avatar;
   cardElement.querySelector('.popup__title').textContent = cardItem.offer.title;
   cardElement.querySelector('.popup__text--address').textContent = cardItem.offer.address;
   cardElement.querySelector('.popup__text--price').innerHTML = cardItem.offer.price + ' &#x20bd;/ночь';
@@ -225,13 +229,17 @@ var renderCard = function (cardItem) {
 
 var renderPins = function (pins) {
   var fragment = document.createDocumentFragment();
-  pins.forEach(function (pin) {
-    fragment.appendChild(createPin(pin));
+  pins.forEach(function (pin, index) {
+    fragment.appendChild(createPin(pin, index));
   });
   mapPin.appendChild(fragment);
 };
 
 var adsList = createAds(NUMBER_OF_ADS);
+
+var addClass = function (element, className) {
+  return element.classList.add(className);
+};
 
 var removeClass = function (element, className) {
   return element.classList.remove(className);
@@ -241,7 +249,6 @@ var setActivePage = function () {
   removeClass(map, 'map--faded');
   removeClass(adForm, 'ad-form--disabled');
   renderPins(adsList);
-  renderCard(adsList[0]);
   fillActiveAddressField();
   addressField.setAttribute('readonly', '');
   mapFiltersFeaturesList.removeAttribute('disabled', '');
@@ -258,6 +265,7 @@ var setActivePage = function () {
   roomsField.addEventListener('change', onRoomsFieldChange);
   mapPinMain.removeEventListener('mousedown', onMapPinMainLeftMouseButtonClick);
   mapPinMain.removeEventListener('keydown', onMapPinMainEnterKeyDown);
+  mapPin.addEventListener('click', onMapPinClick);
 };
 
 var onMapPinMainLeftMouseButtonClick = function (evt) {
@@ -371,4 +379,44 @@ var onRoomsFieldChange = function () {
 mapPinMain.addEventListener('mousedown', onMapPinMainLeftMouseButtonClick);
 mapPinMain.addEventListener('keydown', onMapPinMainEnterKeyDown);
 setInactivePage();
+
+var openCard = function (evt) {
+  var clickedPin;
+
+  if (evt.target.classList.contains('map__pin')) {
+    clickedPin = evt.target;
+  } else {
+    clickedPin = evt.target.parentNode;
+  }
+
+  if ((!clickedPin.classList.contains('map__pin--main')) && (clickedPin.classList.contains('map__pin'))) {
+    var clickedPinId = parseInt(clickedPin.getAttribute('id'), 10);
+    renderCard(adsList[clickedPinId]);
+    removeClass(cardElement, 'hidden');
+    document.addEventListener('keydown', onEscapeKeydown);
+  }
+};
+
+var onMapPinClick = function (evt) {
+  openCard(evt);
+};
+
+var closeCard = function () {
+  addClass(cardElement, 'hidden');
+  document.removeEventListener('keydown', onEscapeKeydown);
+};
+
+var onCardButtonCloseClick = function (evt) {
+  if (evt.button === LEFT_MOUSE_BUTTON_KEY) {
+    closeCard();
+  }
+};
+
+var onEscapeKeydown = function (evt) {
+  if (evt.key === ESC_KEY) {
+    closeCard();
+  }
+};
+
+cardButtonClose.addEventListener('click', onCardButtonCloseClick);
 
