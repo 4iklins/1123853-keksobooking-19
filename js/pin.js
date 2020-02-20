@@ -29,5 +29,5 @@
   window.pin = {
     create: createPin,
     render: renderPins
-  }
+  };
 })();
