@@ -14,7 +14,6 @@
   var isEnterEvent = window.util.isEnterEvent;
   var isLeftMouseButtonEvent = window.util.isLeftMouseButtonEvent;
   var closeButton = window.card.closeButton;
-  var map = window.util.map;
   var addressField = window.form.addressField;
   var mapFilters = map.querySelector('.map__filters-container');
   var mapFiltersSelectLists = mapFilters.querySelectorAll('select');
@@ -44,13 +43,13 @@
     addressField.setAttribute('disabled', '');
   };
 
-  var onMapPinMainLeftMouseButtonClick = function (evt) {
+  var onMapPinMainLeftMouseButtonClick = function () {
     if (isLeftMouseButtonEvent) {
       setActivePage();
     }
   };
 
-  var onMapPinMainEnterKeyDown = function (evt) {
+  var onMapPinMainEnterKeyDown = function () {
     if (isEnterEvent) {
       setActivePage();
     }
@@ -60,7 +59,7 @@
     window.card.open(evt);
   };
 
-  var onCardButtonCloseClick = function (evt) {
+  var onCardButtonCloseClick = function () {
     if (isLeftMouseButtonEvent) {
       window.card.close();
     }
@@ -74,5 +73,5 @@
   window.map = {
     isActive: setActivePage,
     isInactive: setInactivePage
-  }
+  };
 })();

@@ -64,7 +64,7 @@
     document.removeEventListener('keydown', onEscapeKeydown);
   };
 
-  var onEscapeKeydown = function (evt) {
+  var onEscapeKeydown = function () {
     if (isEscEvent) {
       closeCard();
     }
