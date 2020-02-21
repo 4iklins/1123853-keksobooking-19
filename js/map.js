@@ -71,7 +71,7 @@
   setInactivePage();
 
   window.map = {
-    isActive: setActivePage,
-    isInactive: setInactivePage
+    setActive: setActivePage,
+    setInactive: setInactivePage
   };
 })();

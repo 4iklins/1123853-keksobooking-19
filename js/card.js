@@ -1,12 +1,6 @@
 'use strict';
 
 (function () {
-  var map = window.util.map;
-  var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
-  var cardElement = cardTemplate.cloneNode(true);
-  var cardButtonClose = cardElement.querySelector('.popup__close');
-  var mapFilters = map.querySelector('.map__filters-container');
-
   var HOUSING_TYPES = {
     flat: 'Квартира',
     house: 'Дом',
@@ -14,6 +8,11 @@
     palace: 'Дворец'
   };
 
+  var map = window.util.map;
+  var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
+  var cardElement = cardTemplate.cloneNode(true);
+  var cardButtonClose = cardElement.querySelector('.popup__close');
+  var mapFilters = map.querySelector('.map__filters-container');
   var adsList = window.data.adsList;
   var removeClass = window.util.removeClass;
   var addClass = window.util.addClass;

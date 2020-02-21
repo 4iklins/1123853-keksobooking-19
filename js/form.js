@@ -9,18 +9,18 @@
 
   var MIN_TITLE_LENGTH = 30;
 
-  var roomsCapacityMap = {
-    '1': [1],
-    '2': [1, 2],
-    '3': [1, 2, 3],
-    '100': [0]
-  };
-
   var HOUSING_PRICES = {
     bungalo: 0,
     flat: 1000,
     house: 5000,
     palace: 10000
+  };
+
+  var roomsCapacityMap = {
+    '1': [1],
+    '2': [1, 2],
+    '3': [1, 2, 3],
+    '100': [0]
   };
 
   var adForm = window.util.adForm;
