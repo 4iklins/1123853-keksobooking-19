@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 'use strict';
 
 (function () {
@@ -7,8 +8,22 @@
     bungalo: 'Бунгало',
     palace: 'Дворец'
   };
+  var ACTIVE_MAIN_PIN_WIDTH = 65;
+  var ACTIVE_MAIN_PIN_HEIGHT = 84;
+
+  var OFFER_COORDINATES = {
+    X: {
+      MIN: 0,
+      MAX: 1200
+    },
+    Y: {
+      MIN: 130,
+      MAX: 630
+    }
+  };
 
   var map = window.util.map;
+  var mapPinMain = window.util.mapPinMain;
   var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
   var cardElement = cardTemplate.cloneNode(true);
   var cardButtonClose = cardElement.querySelector('.popup__close');
@@ -21,6 +36,7 @@
   var createFeatureList = window.util.createFeatureList;
   var createGalleryElements = window.util.createGalleryElements;
   var isEscEvent = window.util.isEscEvent;
+  var addressField = window.form.addressField;
 
   var renderCard = function (cardItem) {
     var rooms = cardItem.offer.rooms;
@@ -68,6 +84,52 @@
       closeCard();
     }
   };
+
+  mapPinMain.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+
+    var startCoords = {
+      x: evt.clientX,
+      y: evt.clientY
+    };
+
+    var onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
+
+      var shift = {
+        x: startCoords.x - moveEvt.clientX,
+        y: startCoords.y - moveEvt.clientY
+      };
+
+      startCoords = {
+        x: moveEvt.clientX,
+        y: moveEvt.clientY
+      };
+
+      var pinTopCoordinate = parseInt(mapPinMain.style.top, 10) + ACTIVE_MAIN_PIN_HEIGHT - shift.y;
+      var pinLeftCoordinate = Math.round(parseInt(mapPinMain.style.left, 10) + ACTIVE_MAIN_PIN_WIDTH / 2 - shift.x);
+
+      (pinTopCoordinate >= OFFER_COORDINATES.Y.MIN && pinTopCoordinate <= OFFER_COORDINATES.Y.MAX)
+        ? mapPinMain.style.top = (parseInt(mapPinMain.style.top, 10) - shift.y) + 'px'
+        : pinLeftCoordinate += shift.y;
+
+      (pinLeftCoordinate >= OFFER_COORDINATES.X.MIN && pinLeftCoordinate <= OFFER_COORDINATES.X.MAX)
+        ? mapPinMain.style.left = (parseInt(mapPinMain.style.left, 10) - shift.x) + 'px'
+        : pinLeftCoordinate += shift.x;
+
+      addressField.setAttribute('value', pinLeftCoordinate + ', ' + pinTopCoordinate);
+    };
+
+    var onMouseUp = function (upEvt) {
+      upEvt.preventDefault();
+
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  });
 
   window.card = {
     closeButton: cardButtonClose,
