@@ -1,13 +1,6 @@
-/* eslint-disable no-unused-expressions */
 'use strict';
 
 (function () {
-  var HOUSING_TYPES = {
-    flat: 'Квартира',
-    house: 'Дом',
-    bungalo: 'Бунгало',
-    palace: 'Дворец'
-  };
   var ACTIVE_MAIN_PIN_WIDTH = 65;
   var ACTIVE_MAIN_PIN_HEIGHT = 84;
 
@@ -28,6 +21,14 @@
   var cardElement = cardTemplate.cloneNode(true);
   var cardButtonClose = cardElement.querySelector('.popup__close');
   var mapFilters = map.querySelector('.map__filters-container');
+
+  var HOUSING_TYPES = {
+    flat: 'Квартира',
+    house: 'Дом',
+    bungalo: 'Бунгало',
+    palace: 'Дворец'
+  };
+
   var adsList = window.data.adsList;
   var removeClass = window.util.removeClass;
   var addClass = window.util.addClass;
@@ -106,23 +107,32 @@
         y: moveEvt.clientY
       };
 
-      var pinTopCoordinate = parseInt(mapPinMain.style.top, 10) + ACTIVE_MAIN_PIN_HEIGHT - shift.y;
-      var pinLeftCoordinate = Math.round(parseInt(mapPinMain.style.left, 10) + ACTIVE_MAIN_PIN_WIDTH / 2 - shift.x);
+      var mapPinMainCoords = {
+        x: mapPinMain.offsetLeft - shift.x,
+        y: mapPinMain.offsetTop - shift.y
+      };
 
-      (pinTopCoordinate >= OFFER_COORDINATES.Y.MIN && pinTopCoordinate <= OFFER_COORDINATES.Y.MAX)
-        ? mapPinMain.style.top = (parseInt(mapPinMain.style.top, 10) - shift.y) + 'px'
-        : pinLeftCoordinate += shift.y;
+      if (mapPinMainCoords.x > (OFFER_COORDINATES.X.MAX - ACTIVE_MAIN_PIN_WIDTH / 2)) {
+        mapPinMainCoords.x = (OFFER_COORDINATES.X.MAX - ACTIVE_MAIN_PIN_WIDTH / 2);
+      }
+      if (mapPinMainCoords.y > (OFFER_COORDINATES.Y.MAX - ACTIVE_MAIN_PIN_HEIGHT)) {
+        mapPinMainCoords.y = (OFFER_COORDINATES.Y.MAX - ACTIVE_MAIN_PIN_HEIGHT);
+      }
+      if (mapPinMainCoords.x < (OFFER_COORDINATES.X.MIN - ACTIVE_MAIN_PIN_WIDTH / 2)) {
+        mapPinMainCoords.x = (OFFER_COORDINATES.X.MIN - ACTIVE_MAIN_PIN_WIDTH / 2);
+      }
+      if (mapPinMainCoords.y < (OFFER_COORDINATES.Y.MIN - ACTIVE_MAIN_PIN_HEIGHT)) {
+        mapPinMainCoords.y = (OFFER_COORDINATES.Y.MIN - ACTIVE_MAIN_PIN_HEIGHT);
+      }
 
-      (pinLeftCoordinate >= OFFER_COORDINATES.X.MIN && pinLeftCoordinate <= OFFER_COORDINATES.X.MAX)
-        ? mapPinMain.style.left = (parseInt(mapPinMain.style.left, 10) - shift.x) + 'px'
-        : pinLeftCoordinate += shift.x;
+      mapPinMain.style.left = mapPinMainCoords.x + 'px';
+      mapPinMain.style.top = mapPinMainCoords.y + 'px';
 
-      addressField.setAttribute('value', pinLeftCoordinate + ', ' + pinTopCoordinate);
+      addressField.setAttribute('value', Math.round(mapPinMainCoords.x + ACTIVE_MAIN_PIN_WIDTH / 2) + ', ' + (mapPinMainCoords.y + ACTIVE_MAIN_PIN_HEIGHT));
     };
 
     var onMouseUp = function (upEvt) {
       upEvt.preventDefault();
-
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
     };
@@ -130,6 +140,7 @@
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
+
 
   window.card = {
     closeButton: cardButtonClose,
