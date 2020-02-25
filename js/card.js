@@ -1,6 +1,27 @@
 'use strict';
 
 (function () {
+  var ACTIVE_MAIN_PIN_WIDTH = 65;
+  var ACTIVE_MAIN_PIN_HEIGHT = 84;
+
+  var OFFER_COORDINATES = {
+    X: {
+      MIN: 0,
+      MAX: 1200
+    },
+    Y: {
+      MIN: 130,
+      MAX: 630
+    }
+  };
+
+  var map = window.util.map;
+  var mapPinMain = window.util.mapPinMain;
+  var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
+  var cardElement = cardTemplate.cloneNode(true);
+  var cardButtonClose = cardElement.querySelector('.popup__close');
+  var mapFilters = map.querySelector('.map__filters-container');
+
   var HOUSING_TYPES = {
     flat: 'Квартира',
     house: 'Дом',
@@ -8,11 +29,6 @@
     palace: 'Дворец'
   };
 
-  var map = window.util.map;
-  var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
-  var cardElement = cardTemplate.cloneNode(true);
-  var cardButtonClose = cardElement.querySelector('.popup__close');
-  var mapFilters = map.querySelector('.map__filters-container');
   var adsList = window.data.adsList;
   var removeClass = window.util.removeClass;
   var addClass = window.util.addClass;
@@ -21,6 +37,7 @@
   var createFeatureList = window.util.createFeatureList;
   var createGalleryElements = window.util.createGalleryElements;
   var isEscEvent = window.util.isEscEvent;
+  var addressField = window.form.addressField;
 
   var renderCard = function (cardItem) {
     var rooms = cardItem.offer.rooms;
@@ -68,6 +85,62 @@
       closeCard();
     }
   };
+
+  mapPinMain.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+
+    var startCoords = {
+      x: evt.clientX,
+      y: evt.clientY
+    };
+
+    var onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
+
+      var shift = {
+        x: startCoords.x - moveEvt.clientX,
+        y: startCoords.y - moveEvt.clientY
+      };
+
+      startCoords = {
+        x: moveEvt.clientX,
+        y: moveEvt.clientY
+      };
+
+      var mapPinMainCoords = {
+        x: mapPinMain.offsetLeft - shift.x,
+        y: mapPinMain.offsetTop - shift.y
+      };
+
+      if (mapPinMainCoords.x > (OFFER_COORDINATES.X.MAX - ACTIVE_MAIN_PIN_WIDTH / 2)) {
+        mapPinMainCoords.x = (OFFER_COORDINATES.X.MAX - ACTIVE_MAIN_PIN_WIDTH / 2);
+      }
+      if (mapPinMainCoords.y > (OFFER_COORDINATES.Y.MAX - ACTIVE_MAIN_PIN_HEIGHT)) {
+        mapPinMainCoords.y = (OFFER_COORDINATES.Y.MAX - ACTIVE_MAIN_PIN_HEIGHT);
+      }
+      if (mapPinMainCoords.x < (OFFER_COORDINATES.X.MIN - ACTIVE_MAIN_PIN_WIDTH / 2)) {
+        mapPinMainCoords.x = (OFFER_COORDINATES.X.MIN - ACTIVE_MAIN_PIN_WIDTH / 2);
+      }
+      if (mapPinMainCoords.y < (OFFER_COORDINATES.Y.MIN - ACTIVE_MAIN_PIN_HEIGHT)) {
+        mapPinMainCoords.y = (OFFER_COORDINATES.Y.MIN - ACTIVE_MAIN_PIN_HEIGHT);
+      }
+
+      mapPinMain.style.left = mapPinMainCoords.x + 'px';
+      mapPinMain.style.top = mapPinMainCoords.y + 'px';
+
+      addressField.setAttribute('value', Math.round(mapPinMainCoords.x + ACTIVE_MAIN_PIN_WIDTH / 2) + ', ' + (mapPinMainCoords.y + ACTIVE_MAIN_PIN_HEIGHT));
+    };
+
+    var onMouseUp = function (upEvt) {
+      upEvt.preventDefault();
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  });
+
 
   window.card = {
     closeButton: cardButtonClose,
