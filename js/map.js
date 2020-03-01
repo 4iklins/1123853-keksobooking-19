@@ -3,8 +3,7 @@
 (function () {
   var removeClass = window.util.removeClass;
   var map = window.util.map;
-  var render = window.pin.render;
-  var adsList = window.data.adsList;
+  var getData = window.data.get;
   var setActiveFields = window.form.setActiveFields;
   var setInactiveFields = window.form.setInactiveFields;
   var fillInactiveAddressField = window.form.fillInactiveAddressField;
@@ -24,7 +23,7 @@
   var setActivePage = function () {
     removeClass(map, 'map--faded');
     removeClass(adForm, 'ad-form--disabled');
-    render(adsList);
+    getData();
     fillActiveAddressField();
     addressField.setAttribute('readonly', '');
     mapFiltersFeaturesList.removeAttribute('disabled', '');

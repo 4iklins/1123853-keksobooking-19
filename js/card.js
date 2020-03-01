@@ -29,7 +29,7 @@
     palace: 'Дворец'
   };
 
-  var adsList = window.data.adsList;
+  // var adsList = window.data.adsList;
   var removeClass = window.util.removeClass;
   var addClass = window.util.addClass;
   var roomsFlexNormalize = window.util.roomsFlexNormalize;
@@ -69,7 +69,7 @@
 
     if ((!clickedPin.classList.contains('map__pin--main')) && (clickedPin.classList.contains('map__pin'))) {
       var clickedPinId = parseInt(clickedPin.getAttribute('id'), 10);
-      renderCard(adsList[clickedPinId]);
+      renderCard(window.adsList[clickedPinId]);
       removeClass(cardElement, 'hidden');
       document.addEventListener('keydown', onEscapeKeydown);
     }
