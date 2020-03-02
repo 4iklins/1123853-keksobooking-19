@@ -30,6 +30,7 @@
     getData();
     fillActiveAddressField();
     addressField.setAttribute('readonly', '');
+    addressField.removeAttribute('disabled', '');
     mapFiltersFeaturesList.removeAttribute('disabled', '');
     setActiveFields(mapFiltersSelectLists);
     setActiveFields(adFormFieldsets);
