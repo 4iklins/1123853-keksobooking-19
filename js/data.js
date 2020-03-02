@@ -2,7 +2,7 @@
 
 (function () {
   var renderPins = window.pin.render;
-  var getServerData = window.load;
+  var getServerData = window.load.get;
 
   var getData = function () {
     getServerData(onSuccess, onError);
