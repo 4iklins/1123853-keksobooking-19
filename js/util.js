@@ -6,7 +6,7 @@
   var LEFT_MOUSE_BUTTON_KEY = 0;
 
   var map = document.querySelector('.map');
-  var mapPins = map.querySelector('.map__pins');
+  var mapPinsContainer = map.querySelector('.map__pins');
   var mapPinMain = map.querySelector('.map__pin--main');
   var adForm = document.querySelector('.ad-form');
 
@@ -95,7 +95,7 @@
 
   window.util = {
     map: map,
-    mapPins: mapPins,
+    mapPinsContainer: mapPinsContainer,
     mapPinMain: mapPinMain,
     adForm: adForm,
     isEnterEvent: isEnterEvent,

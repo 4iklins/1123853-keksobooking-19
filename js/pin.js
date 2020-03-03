@@ -3,9 +3,8 @@
 (function () {
   var PIN_WIDTH = 50;
   var PIN_HEIGHT = 70;
-
-  var mapPins = window.util.mapPins;
-
+  var map = window.util.map;
+  var mapPinsContainer = window.util.mapPinsContainer;
 
   var createPin = function (pin, index) {
     var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
@@ -23,11 +22,19 @@
     pins.forEach(function (pin, index) {
       fragment.appendChild(createPin(pin, index));
     });
-    mapPins.appendChild(fragment);
+    mapPinsContainer.appendChild(fragment);
+    window.mapPins = map.querySelectorAll('button[type="button"]');
+  };
+
+  var removePins = function (pins) {
+    return pins.forEach(function (item) {
+      item.remove();
+    });
   };
 
   window.pin = {
     create: createPin,
-    render: renderPins
+    render: renderPins,
+    remove: removePins
   };
 })();
