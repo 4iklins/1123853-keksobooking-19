@@ -142,6 +142,7 @@
     onSuccess(new FormData(adForm), function () {
       main.appendChild(successNode);
       window.map.setInactive();
+      window.pin.remove(window.mapPins);
       addEventListener('click', onSuccessNodeClick);
       addEventListener('keydown', onSuccessNodeKeydown);
     }, onError);
