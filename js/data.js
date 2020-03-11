@@ -9,8 +9,10 @@
   };
 
   var onSuccess = function (pins) {
-    window.adsList = pins;
-    renderPins(pins);
+    window.adsList = pins.map(function (ad, index) {
+      return Object.assign(ad, {id: index});
+    });
+    renderPins(window.adsList);
   };
 
   var onError = function (errorMessage) {
