@@ -19,7 +19,7 @@
 
   var renderPins = function (pins) {
     var fragment = document.createDocumentFragment();
-    pins.forEach(function (pin, index) {
+    pins.slice(0, 5).forEach(function (pin, index) {
       fragment.appendChild(createPin(pin, index));
     });
     mapPinsContainer.appendChild(fragment);
