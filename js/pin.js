@@ -19,8 +19,8 @@
 
   var renderPins = function (pins) {
     var fragment = document.createDocumentFragment();
-    pins.slice(0, 5).forEach(function (pin, index) {
-      fragment.appendChild(createPin(pin, index));
+    pins.slice(0, 5).forEach(function (pin) {
+      fragment.appendChild(createPin(pin, pin.id));
     });
     mapPinsContainer.appendChild(fragment);
     window.mapPins = map.querySelectorAll('button[type="button"]');
