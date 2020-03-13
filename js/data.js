@@ -12,7 +12,6 @@
     window.adsList = pins.map(function (ad, index) {
       return Object.assign(ad, {id: index});
     });
-    console.log(window.adsList);
     renderPins(window.adsList);
   };
 
