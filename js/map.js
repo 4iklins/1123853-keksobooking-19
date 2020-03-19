@@ -23,6 +23,7 @@
   var resetForm = window.form.resetForm;
   var resetButton = adForm.querySelector('.ad-form__reset');
   var closeCard = window.card.close;
+  var avatarPeview = document.querySelector('.ad-form-header__preview img');
 
   var setActivePage = function () {
     removeClass(map, 'map--faded');
@@ -41,6 +42,7 @@
   };
 
   var setInactivePage = function () {
+    var housingPreview = document.querySelector('.ad-form__photo');
     addClass(map, 'map--faded');
     addClass(adForm, 'ad-form--disabled');
     resetForm();
@@ -54,6 +56,12 @@
     mapPinMain.addEventListener('keydown', onMapPinMainEnterKeyDown);
     if (window.mapPin !== undefined) {
       window.pin.remove(window.mapPins);
+    }
+    if (!avatarPeview.src.includes('img/muffin-grey.svg')) {
+      window.avatar.resetMapPreview();
+    }
+    if (housingPreview && housingPreview.hasChildNodes()) {
+      window.avatar.resetHousingPreview();
     }
   };
 
