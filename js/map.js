@@ -24,6 +24,7 @@
   var resetButton = adForm.querySelector('.ad-form__reset');
   var closeCard = window.card.close;
   var avatarPeview = document.querySelector('.ad-form-header__preview img');
+  var setDefaultPriceFieldAttributes = window.form.setDefaultPriceFieldAttributes;
 
   var setActivePage = function () {
     removeClass(map, 'map--faded');
@@ -52,6 +53,7 @@
     setInactiveFields(mapFiltersSelectLists);
     setInactiveFields(adFormFieldsets);
     addressField.setAttribute('disabled', '');
+    setDefaultPriceFieldAttributes();
     mapPinMain.addEventListener('mousedown', onMapPinMainLeftMouseButtonClick);
     mapPinMain.addEventListener('keydown', onMapPinMainEnterKeyDown);
     if (window.mapPin !== undefined) {

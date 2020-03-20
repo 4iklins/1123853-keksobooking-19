@@ -7,6 +7,8 @@
   var avatarPeview = document.querySelector('.ad-form-header__preview img');
   var fileHousingChoose = document.querySelector('.ad-form__input');
   var housingPreview = document.querySelector('.ad-form__photo');
+  var inputUpload = document.querySelector('.ad-form__upload');
+  var addClass = window.util.addClass;
 
   var uploadAvatarImage = function () {
     var file = fileAvatarChoose.files[0];
@@ -27,6 +29,7 @@
   var uploadHousingImage = function () {
     var file = fileHousingChoose.files[0];
     var fileName = file.name.toLowerCase();
+
     var matches = FILE_TYPES.some(function (it) {
       return fileName.endsWith(it);
     });
@@ -34,11 +37,15 @@
     if (matches) {
       var reader = new FileReader();
       reader.addEventListener('load', function () {
-        var imageContainer = document.createElement('img');
-        imageContainer.setAttribute('src', housingPreview.src = reader.result);
-        imageContainer.setAttribute('width', '70');
-        imageContainer.setAttribute('height', '70');
-        housingPreview.appendChild(imageContainer);
+        housingPreview.remove();
+        var imageNode = document.createElement('img');
+        var divNode = document.createElement('div');
+        addClass(divNode, 'ad-form__photo');
+        imageNode.setAttribute('src', divNode.src = reader.result);
+        imageNode.setAttribute('width', '70');
+        imageNode.setAttribute('height', '70');
+        divNode.appendChild(imageNode);
+        inputUpload.insertAdjacentElement('afterend', divNode);
       });
       reader.readAsDataURL(file);
     }

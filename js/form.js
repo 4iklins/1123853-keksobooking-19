@@ -189,6 +189,10 @@
     adForm.reset();
   };
 
+  var setDefaultPriceFieldAttributes = function () {
+    pricePerNightField.setAttribute('min', HOUSING_PRICES['flat']);
+    pricePerNightField.setAttribute('placeholder', HOUSING_PRICES['flat']);
+  };
 
   titleField.addEventListener('input', onTitleFieldInput);
   typeOfHousingField.addEventListener('change', onTypeOfHousingChange);
@@ -210,7 +214,8 @@
     setActiveGuestFieldItem: setActiveGuestFieldItem,
     onCheckinFieldChange: onCheckinFieldChange,
     onCheckoutFieldChange: onCheckoutFieldChange,
-    resetForm: resetForm
+    resetForm: resetForm,
+    setDefaultPriceFieldAttributes: setDefaultPriceFieldAttributes
   };
 })();
 
