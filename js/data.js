@@ -3,6 +3,10 @@
 (function () {
   var renderPins = window.pin.render;
   var getServerData = window.load.get;
+  var mapFilters = window.util.mapFilters;
+  var mapFiltersSelectLists = mapFilters.querySelectorAll('select');
+  var mapFiltersFeaturesList = mapFilters.querySelector('.map__features');
+  var setActiveFields = window.form.setActiveFields;
 
   var getData = function () {
     getServerData(onSuccess, onError);
@@ -13,6 +17,8 @@
       return Object.assign(ad, {id: index});
     });
     renderPins(window.adsList);
+    setActiveFields(mapFiltersSelectLists);
+    mapFiltersFeaturesList.removeAttribute('disabled', '');
   };
 
   var onError = function (errorMessage) {

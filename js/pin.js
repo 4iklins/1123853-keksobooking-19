@@ -3,6 +3,7 @@
 (function () {
   var PIN_WIDTH = 50;
   var PIN_HEIGHT = 70;
+  var MAX_PINS_QUANTITY = 5;
   var map = window.util.map;
   var mapPinsContainer = window.util.mapPinsContainer;
 
@@ -19,7 +20,7 @@
 
   var renderPins = function (pins) {
     var fragment = document.createDocumentFragment();
-    pins.slice(0, 5).forEach(function (pin) {
+    pins.slice(0, MAX_PINS_QUANTITY).forEach(function (pin) {
       fragment.appendChild(createPin(pin, pin.id));
     });
     mapPinsContainer.appendChild(fragment);

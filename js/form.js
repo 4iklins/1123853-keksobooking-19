@@ -18,6 +18,7 @@
     house: 5000,
     palace: 10000
   };
+  var INPUT_BORDER = 'outline: none; box-shadow: 0 0 2px 2px #ff6547;';
 
   var roomsCapacityMap = {
     '1': [1],
@@ -25,6 +26,7 @@
     '3': [1, 2, 3],
     '100': [0]
   };
+  var ESC_KEY = 'Escape';
 
   var adForm = window.util.adForm;
   var addressField = adForm.querySelector('#address');
@@ -36,7 +38,7 @@
   var roomsField = adForm.querySelector('#room_number');
   var guestsField = adForm.querySelector('#capacity');
   var mapPinMain = window.util.mapPinMain;
-  var onSuccess = window.load.send;
+  var onSuccessSend = window.load.send;
   var main = document.querySelector('main');
   var successTemplate = document.querySelector('#success').content.querySelector('.success');
   var successNode = successTemplate.cloneNode(true);
@@ -77,22 +79,29 @@
   var validateTitle = function () {
     if (titleField.validity.valueMissing) {
       titleField.setCustomValidity('Обязательное текстовое поле');
+      titleField.style = INPUT_BORDER;
     } else if (titleField.value.length < MIN_TITLE_LENGTH) {
       titleField.setCustomValidity('Минимальная длина — ' + MIN_TITLE_LENGTH + ' символов');
+      titleField.style = INPUT_BORDER;
     } else {
       titleField.setCustomValidity('');
+      titleField.style = 'box-shadow: none';
     }
   };
 
   var validatePrice = function () {
     if (pricePerNightField.validity.valueMissing) {
       pricePerNightField.setCustomValidity('Обязательное текстовое поле');
+      pricePerNightField.style = INPUT_BORDER;
     } else if (pricePerNightField.validity.rangeUnderflow) {
       pricePerNightField.setCustomValidity('Цена не может быть меньше ' + pricePerNightField.min + ' руб.');
+      pricePerNightField.style = INPUT_BORDER;
     } else if (pricePerNightField.validity.rangeOverflow) {
       pricePerNightField.setCustomValidity('Цена не может быть больше ' + pricePerNightField.max + ' руб.');
+      pricePerNightField.style = INPUT_BORDER;
     } else {
       pricePerNightField.setCustomValidity('');
+      pricePerNightField.style = 'box-shadow: none';
     }
   };
 
@@ -122,8 +131,6 @@
       : roomsCapacityMap[rooms][0];
   };
 
-  validateTitle();
-  validatePrice();
   setActiveGuestFieldItem();
 
   var onTitleFieldInput = function () {
@@ -139,49 +146,57 @@
   };
 
   var sendFormData = function (evt) {
-    onSuccess(new FormData(adForm), function () {
+    onSuccessSend(new FormData(adForm), function () {
       main.appendChild(successNode);
       window.map.setInactive();
       window.pin.remove(window.mapPins);
-      addEventListener('click', onSuccessNodeClick);
-      addEventListener('keydown', onSuccessNodeKeydown);
+      document.addEventListener('click', onSuccessMessageClick);
+      document.addEventListener('keydown', onSuccessMessageEscPress);
     }, onError);
     evt.preventDefault();
   };
 
   var onError = function () {
     main.appendChild(errorNode);
-    addEventListener('click', onErrorNodeClick);
-    addEventListener('keydown', onErrorNodeKeydown);
+    document.addEventListener('click', onErrorMessageClick);
+    document.addEventListener('keydown', onErrorMessageEscPress);
   };
 
   var onSuccessSubmit = function (evt) {
     sendFormData(evt);
   };
 
-  var onSuccessNodeClick = function (evt) {
+  var onSuccessMessageClick = function (evt) {
     var clickedElement = evt.target;
     if (clickedElement.classList.contains('success') || clickedElement.classList.contains('success__message')) {
       successNode.remove();
+      document.removeEventListener('click', onSuccessMessageClick);
+      document.removeEventListener('keydown', onSuccessMessageEscPress);
     }
   };
 
-  var onErrorNodeClick = function (evt) {
+  var onErrorMessageClick = function (evt) {
     var clickedElement = evt.target;
     if (clickedElement.classList.contains('error') || clickedElement.classList.contains('error__message') || clickedElement.classList.contains('error__button')) {
       errorNode.remove();
+      document.removeEventListener('click', onErrorMessageClick);
+      document.removeEventListener('keydown', onErrorMessageEscPress);
     }
   };
 
-  var onSuccessNodeKeydown = function () {
-    if (window.util.isEscEvent) {
+  var onSuccessMessageEscPress = function (evt) {
+    if (evt.key === ESC_KEY) {
       successNode.remove();
+      document.removeEventListener('click', onSuccessMessageClick);
+      document.removeEventListener('keydown', onSuccessMessageEscPress);
     }
   };
 
-  var onErrorNodeKeydown = function () {
-    if (window.util.isEscEvent) {
+  var onErrorMessageEscPress = function (evt) {
+    if (evt.key === ESC_KEY) {
       errorNode.remove();
+      document.removeEventListener('click', onErrorMessageClick);
+      document.removeEventListener('keydown', onErrorMessageEscPress);
     }
   };
 
@@ -214,7 +229,7 @@
     setActiveGuestFieldItem: setActiveGuestFieldItem,
     onCheckinFieldChange: onCheckinFieldChange,
     onCheckoutFieldChange: onCheckoutFieldChange,
-    resetForm: resetForm,
+    reset: resetForm,
     setDefaultPriceFieldAttributes: setDefaultPriceFieldAttributes
   };
 })();

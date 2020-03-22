@@ -1,6 +1,9 @@
 'use strict';
 
 (function () {
+  var ENTER_KEY = 'Enter';
+  var LEFT_MOUSE_BUTTON_KEY = 0;
+
   var addClass = window.util.addClass;
   var removeClass = window.util.removeClass;
   var map = window.util.map;
@@ -11,16 +14,14 @@
   var fillActiveAddressField = window.form.fillActiveAddressField;
   var mapPinMain = window.util.mapPinMain;
   var mapPinsContainer = window.util.mapPinsContainer;
-  var isEnterEvent = window.util.isEnterEvent;
-  var isLeftMouseButtonEvent = window.util.isLeftMouseButtonEvent;
   var closeButton = window.card.closeButton;
   var addressField = window.form.addressField;
-  var mapFilters = map.querySelector('.map__filters-container');
+  var mapFilters = window.util.mapFilters;
   var mapFiltersSelectLists = mapFilters.querySelectorAll('select');
   var mapFiltersFeaturesList = mapFilters.querySelector('.map__features');
   var adForm = window.util.adForm;
   var adFormFieldsets = adForm.querySelectorAll('fieldset');
-  var resetForm = window.form.resetForm;
+  var resetForm = window.form.reset;
   var resetButton = adForm.querySelector('.ad-form__reset');
   var closeCard = window.card.close;
   var avatarPeview = document.querySelector('.ad-form-header__preview img');
@@ -33,8 +34,6 @@
     fillActiveAddressField();
     addressField.setAttribute('readonly', '');
     addressField.removeAttribute('disabled', '');
-    mapFiltersFeaturesList.removeAttribute('disabled', '');
-    setActiveFields(mapFiltersSelectLists);
     setActiveFields(adFormFieldsets);
     mapPinMain.removeEventListener('mousedown', onMapPinMainLeftMouseButtonClick);
     mapPinMain.removeEventListener('keydown', onMapPinMainEnterKeyDown);
@@ -67,14 +66,14 @@
     }
   };
 
-  var onMapPinMainLeftMouseButtonClick = function () {
-    if (isLeftMouseButtonEvent) {
+  var onMapPinMainLeftMouseButtonClick = function (evt) {
+    if (evt.button === LEFT_MOUSE_BUTTON_KEY) {
       setActivePage();
     }
   };
 
-  var onMapPinMainEnterKeyDown = function () {
-    if (isEnterEvent) {
+  var onMapPinMainEnterKeyDown = function (evt) {
+    if (evt.key === ENTER_KEY) {
       setActivePage();
     }
   };
@@ -83,8 +82,8 @@
     window.card.open(evt);
   };
 
-  var onCardButtonCloseClick = function () {
-    if (isLeftMouseButtonEvent) {
+  var onCardButtonCloseClick = function (evt) {
+    if (evt.button === LEFT_MOUSE_BUTTON_KEY) {
       window.card.close();
     }
   };
